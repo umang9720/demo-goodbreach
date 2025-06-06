@@ -18,7 +18,7 @@ export default function OnBoardingScreen() {
     const navigation = useNavigation();
 
     const handleDone = () => {
-        navigation.navigate("Home");
+        navigation.navigate("Login");
         setItem("onboarded", "1");
     };
 

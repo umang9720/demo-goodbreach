@@ -23,4 +23,17 @@ export const removeItem = async (key) => {
     } catch (error) {
         console.log('Error deleting value: ',error);
     }
-}
+};
+
+export const setLogin = async () => {
+  await AsyncStorage.setItem("isLoggedIn", "true");
+};
+
+export const checkLogin = async () => {
+  const status = await AsyncStorage.getItem("isLoggedIn");
+  return status === "true";
+};
+
+export const logout = async () => {
+  await AsyncStorage.removeItem("isLoggedIn");
+};
