@@ -1,113 +1,57 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import  {createContext, useEffect, useState} from 'react';
-import {BASE_URL} from '../config/defined_url.js';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getData, storeData, removeData } from '../utils/AsyncStorage';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-  const [userInfo, setUserInfo] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [splashLoading, setSplashLoading] = useState(false);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
 
-  const register = (name, email, password) => {
-    setIsLoading(true);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    axios
-      .post(`${BASE_URL}/create/user`, {
-        name,
-        email,
-        password,
-      })
-      .then(res => {
-        let userInfo = res.data;
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-        console.log(userInfo);
-      })
-      .catch(e => {
-        console.log(`register error ${e}`);
-        setIsLoading(false);
-      });
-  };
+  useEffect(() => {
+    checkAuthState();
+  }, []);
 
-  const login = (email, password) => {
-    setIsLoading(true);
-
-    axios
-      .post(`${BASE_URL}/user/login`, {
-        email,
-        password,
-      })
-      .then(res => {
-        let userInfo = res.data;
-        console.log(userInfo);
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-      })
-      .catch(e => {
-        console.log(`login error ${e}`);
-        setIsLoading(false);
-      });
-  };
-
-  const logout = () => {
-    setIsLoading(true);
-
-    axios
-      .post(
-        `${BASE_URL}/logout`,
-        {},
-        {
-          headers: {Authorization: `Bearer ${userInfo.access_token}`},
-        },
-      )
-      .then(res => {
-        console.log(res.data);
-        AsyncStorage.removeItem('userInfo');
-        setUserInfo({});
-        setIsLoading(false);
-      })
-      .catch(e => {
-        console.log(`logout error ${e}`);
-        setIsLoading(false);
-      });
-  };
-
-  const isLoggedIn = async () => {
+  const checkAuthState = async () => {
     try {
-      setSplashLoading(true);
-
-      let userInfo = await AsyncStorage.getItem('userInfo');
-      userInfo = JSON.parse(userInfo);
-
-      if (userInfo) {
-        setUserInfo(userInfo);
+      const savedUser = await getData('user');
+      const savedToken = await getData('token');
+      
+      if (savedUser && savedToken) {
+        setUser(savedUser);
+        setToken(savedToken);
       }
-
-      setSplashLoading(false);
-    } catch (e) {
-      setSplashLoading(false);
-      console.log(`is logged in error ${e}`);
+    } catch (error) {
+      console.error('Error checking auth state:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    isLoggedIn();
-  }, []);
+  const login = async (userData, userToken) => {
+    setUser(userData);
+    setToken(userToken);
+    await storeData('user', userData);
+    await storeData('token', userToken);
+  };
+
+  const logout = async () => {
+    setUser(null);
+    setToken(null);
+    await removeData('user');
+    await removeData('token');
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isLoading,
-        userInfo,
-        splashLoading,
-        register,
-        login,
-        logout,
-      }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

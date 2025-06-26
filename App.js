@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StatusBar, Text } from "react-native";
 import SplashScreen from "./screens/SplashScreen";
 import AppNavigation from "./navigation/AppNavigation";
-
+import { AuthProvider } from "./hooks/AuthContext";
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [error, setError] = useState(null);
@@ -16,7 +16,10 @@ export default function App() {
     if (error) {
       return <Text style={{ padding: 20, color: "red" }}>App crashed: {error.toString()}</Text>;
     }
-    return showSplash ? <SplashScreen /> : <AppNavigation />;
+    return showSplash ? <SplashScreen /> : <AuthProvider>
+      <AppNavigation />
+    </AuthProvider>
+;
   };
 
   return (

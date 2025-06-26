@@ -1,8 +1,13 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OnBoardingScreen from "../screens/OnBoardingScreen";
-import LoginScreen from "../screens/LoginScreen";
+import LoginScreen from "../container/Login/LoginScreen";
+import SignUp from '../container/SignUp/SignUp';
+import Profile from '../container/Profile/Profile';
+import DashBoard from '../container/DashBoard/DashBoard';
 import HomeScreen from "../screens/HomeScreen";
+import CreateGoal from '../container/Goal/CreateGoal';
+// import Goal from "../container/Goal/Goal"
 import { useEffect,useState } from "react";
 import { getItem } from "../utils/AsyncStorage";
 
@@ -46,6 +51,27 @@ export default function AppNavigation() {
             component={HomeScreen}
             options={{ headerShown: false }}
           />
+          
+          <Stack.Screen
+            name="CreateGoal"
+            component={CreateGoal}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ headerShown: false }}
+          /> 
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ headerShown: false }}
+          />
+            <Stack.Screen
+            name="DashBoard"
+            component={DashBoard}
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -63,9 +89,29 @@ export default function AppNavigation() {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{ headerShown: false }}
+          /> 
            <Stack.Screen
             name="Home"
             component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+           <Stack.Screen
+            name="DashBoard"
+            component={DashBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ headerShown: false }}
+          />
+            <Stack.Screen
+            name="CreateGoal"
+            component={CreateGoal}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

@@ -3,15 +3,15 @@ import { View, Text, StyleSheet, Image } from "react-native";
 export default function SplashScreen() {
   return (
     <View style={styles.container}>
-      <View style={styles.logo}>
+
         <Image
-          source={require("../assets/images/splashscreenicon.png")}
+          source={require("../assets/images/Group 1.png")}
           style={styles.logoImg}
         />
         <Text style={styles.title}>Good Breach</Text>
         <Text style={styles.subtitle}>Financial freedom, simplified</Text>
       </View>
-    </View>
+
   );
 }
 
@@ -22,15 +22,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  logo: {
-    height: 237,
-    width: 297,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   logoImg: {
-    height: 118,
-    width: 95,
+    height: 200,
+    width: 200,
     marginBottom: 20,
   },
   title: {
