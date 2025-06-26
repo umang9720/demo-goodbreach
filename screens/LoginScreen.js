@@ -9,8 +9,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const { width } = Dimensions.get("window");
 
@@ -29,15 +31,29 @@ const LoginScreen = ({ navigation }) => {
   }, []);
 
   const handleLogin = async () => {
-    // Use your own validation logic here
-    const allowedEmail = "testuser@example.com";
-    const allowedPassword = "password123";
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
 
-    if (email === allowedEmail && password === allowedPassword) {
-      await AsyncStorage.setItem("isLoggedIn", "true");
-      navigation.navigate("Home");
-    } else {
-      alert("Invalid credentials. Access restricted.");
+    try {
+      const response = await axios.post("https://3.8.94.61:8080/api/user/login", {
+        email,
+        password,
+      });
+
+      // If successful, store login flag and navigate
+      if (response.status === 200) {
+        await AsyncStorage.setItem("isLoggedIn", "true");
+        await AsyncStorage.setItem("userToken", response.data.token || "");
+        navigation.navigate("Home");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        Alert.alert("Login Failed", "Invalid credentials. Please try again.");
+      } else {
+        Alert.alert("Error", "Unable to login. Please try later.");
+      }
     }
   };
 
