@@ -3,6 +3,7 @@ import { View, StatusBar, Text } from "react-native";
 import SplashScreen from "./screens/SplashScreen";
 import AppNavigation from "./navigation/AppNavigation";
 import { AuthProvider } from "./hooks/AuthContext";
+import { GoalProvider } from "./hooks/goal";
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +18,10 @@ export default function App() {
       return <Text style={{ padding: 20, color: "red" }}>App crashed: {error.toString()}</Text>;
     }
     return showSplash ? <SplashScreen /> : <AuthProvider>
-      <AppNavigation />
+      <GoalProvider>
+        <AppNavigation />
+      </GoalProvider>
+      
     </AuthProvider>
 ;
   };
