@@ -83,10 +83,16 @@ const DashboardScreen = () => {
           { userId: user._id },
           user.token
         );
-        console.log("API Response:", JSON.stringify(response.data, null, 2));
+        console.log(
+          "API Response:",
+          JSON.stringify(response.data.data.data, null, 2)
+        );
 
-        if (response?.status === 201 && Array.isArray(response?.data?.data)) {
-          const activeGoals = response.data.data.filter(
+        if (
+          response?.status === 201 &&
+          Array.isArray(response?.data?.data?.data)
+        ) {
+          const activeGoals = response.data.data.data.filter(
             (goal) => goal.status === "active"
           );
           console.log("Active Goals:", JSON.stringify(activeGoals, null, 2));

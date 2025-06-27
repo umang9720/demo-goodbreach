@@ -55,12 +55,12 @@ const pickImage = async () => {
     return;
   }
 
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true,
-    aspect: [1, 1],
-    quality: 0.7,
-  });
+ const result = await ImagePicker.launchImageLibraryAsync({
+  mediaTypes: ['images'], // Use string or array of strings
+  allowsEditing: true,
+  aspect: [1, 1],
+  quality: 0.7,
+});
 
   if (!result.canceled) {
     setImageUrl(result.assets[0].uri);

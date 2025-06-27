@@ -9,7 +9,7 @@ export const apiCall = async (endpoint, method = 'GET', data = null, token = nul
   }
 
   // ❗Guard: Prevent sending protected requests if user not logged in
-  if (!token && endpoint !== '/user/login' && endpoint !== '/user/register') {
+  if (!token && endpoint !== '/user/login' && endpoint !== '/create/user') {
     return { error: 'Unauthorized', status: 401 };
   }
 
