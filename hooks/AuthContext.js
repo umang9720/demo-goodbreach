@@ -15,10 +15,18 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+useEffect(() => {
+  checkAuthState();
 
-  useEffect(() => {
-    checkAuthState();
-  }, []);
+  // 🔍 Debug: Log storage content
+  (async () => {
+    const u = await getData('user');
+    const t = await getData('token');
+    console.log('✅ Stored User:', u);
+    console.log('✅ Stored Token:', t);
+  })();
+
+}, []);
 
   const checkAuthState = async () => {
     try {
@@ -37,8 +45,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (userData, userToken) => {
+    // ✅ Validate token and userData before storing
+    if (!userData || !userToken) {
+      console.warn('Login failed: Missing user data or token');
+      return;
+    }
+
     setUser(userData);
     setToken(userToken);
+
     await storeData('user', userData);
     await storeData('token', userToken);
   };

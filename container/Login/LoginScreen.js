@@ -24,42 +24,51 @@ const LoginScreen = ({ navigation }) => {
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  if (!email || !password) {
+    Alert.alert('Error', 'Please fill in all fields');
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    // ✅ No token passed for login call (as it should be)
+  try {
     const response = await apiCall('/user/login', 'POST', { email, password });
+    console.log('Login API response:', response);
 
     setLoading(false);
 
-    if (response.status === 201) {
-      await login(response.data.user, response.data.token);
+    const responseData = response.data?.data;
+
+    if (response.status === 201 && responseData?.token) {
+      const { token, ...userData } = responseData;
+      await login(userData, token);
       navigation.replace('Home');
     } else if (response.status === 400) {
       Alert.alert('Error', 'Wrong credentials');
-    } else if (response.status === 200) {
-      Alert.alert('Error', 'An error occurred');
     } else {
       Alert.alert('Error', 'Something went wrong');
+      console.warn('Unexpected login response structure:', response);
     }
-  };
+  } catch (err) {
+    setLoading(false);
+    console.error('Login error:', err);
+    Alert.alert('Error', 'Network error or server issue');
+  }
+};
+
 
   return (
     <KeyboardAvoidingView 
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-    
       <Image
         source={require('../../assets/images/Group 1.png')}
-        style={{ width: 70, height: 70, marginBottom:30 }}
+        style={{ width: 70, height: 70, marginBottom: 30 }}
       />
       <Text style={styles.text}>Welcome Back To</Text>
       <Text style={styles.text}>Good Breach!</Text>
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -98,7 +107,6 @@ const LoginScreen = ({ navigation }) => {
           Don't have an account? <Text style={styles.linkTextBold}>Sign Up</Text>
         </Text>
       </TouchableOpacity>
-
     </KeyboardAvoidingView>
   );
 };
@@ -115,7 +123,11 @@ const styles = StyleSheet.create({
     color: "#1C1825",
     fontSize: 24,
     fontWeight: "bold",
-    fontFamily: "Ouicksand",
+    fontFamily: "Ouicksand", // Make sure this font is properly loaded or remove this line
+  },
+  inputContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   input: {
     backgroundColor: "#FFEAE9",
@@ -123,9 +135,6 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     padding: 12,
     marginTop: 15,
-  },
-  spacer: {
-    height: 12,
   },
   logBtn: {
     backgroundColor: "#F0C0BE",
@@ -136,22 +145,22 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     alignItems: "center",
   },
-  btnText: { color: "#fff", fontSize: 16 },
-  button: {
-    marginTop: 15,
-    flexDirection: 'row',
-    backgroundColor: '#FFEAE9',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 9999,
-    width: 346,
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  btnText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  linkButton: {
+    marginTop: 10,
   },
   linkText: {
     color: '#1C1825',
     fontSize: 16,
-    fontWeight: 'medium',
+    fontWeight: '400',
   },
   linkTextBold: {
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });

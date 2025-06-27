@@ -27,12 +27,15 @@ export const removeItem = async (key) => {
 
 export const storeData = async (key, value) => {
   try {
+    if (value === null || value === undefined) {
+      console.warn(`⚠️ Skipped storing "${key}" because value is null or undefined`);
+      return;
+    }
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error('Error storing data:', error);
+    console.error('❌ Error storing data:', error);
   }
 };
-
 export const getData = async (key) => {
   try {
     const value = await AsyncStorage.getItem(key);

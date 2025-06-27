@@ -24,15 +24,16 @@ const CreateGoalScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const { user, token } = useAuth();
 
+  // Map goal type to emoji & image file name
   const goalTypes = [
-    { type: 'trip', emoji: '🧳', label: 'Trip' },
-    { type: 'laptop', emoji: '💻', label: 'Laptop' },
-    { type: 'college fee', emoji: '🎓', label: 'College Fee' },
-    { type: 'game', emoji: '🎮', label: 'Game' },
-    { type: 'future savings', emoji: '💰', label: 'Future Savings' },
-    { type: 'emergency funds', emoji: '🛡️', label: 'Emergency Funds' },
-    { type: 'electronics', emoji: '📱', label: 'Electronics' },
-    { type: 'accessories', emoji: '👜', label: 'Accessories' },
+    { type: 'trip', emoji: '🧳', label: 'Trip', image: 'trip.jpg' },
+    { type: 'laptop', emoji: '💻', label: 'Laptop', image: 'laptop.jpg' },
+    { type: 'college fee', emoji: '🎓', label: 'College Fee', image: 'college-fee.jpg' },
+    { type: 'game', emoji: '🎮', label: 'Game', image: 'game.jpg' },
+    { type: 'future savings', emoji: '💰', label: 'Future Savings', image: 'future.jpg' },
+    { type: 'emergency funds', emoji: '🛡️', label: 'Emergency Funds', image: 'emergency.jpg' },
+    { type: 'electronics', emoji: '📱', label: 'Electronics', image: 'electronics.jpg' },
+    { type: 'accessories', emoji: '👜', label: 'Accessories', image: 'accessories.jpg' },
   ];
 
   const handleCreateGoal = async () => {
@@ -46,23 +47,30 @@ const CreateGoalScreen = ({ navigation }) => {
       return;
     }
 
+    const selectedGoal = goalTypes.find(g => g.type === selectedType);
     const goalData = {
-      userId: user.id,
-      goalImage: goalTypes.find(g => g.type === selectedType)?.emoji || '🎯',
+      userId: user._id, // ✅ use _id instead of id
+      goalImage: selectedGoal?.image || 'default.jpg',
       goalName,
       goalAmount: parseFloat(goalAmount),
       durationDate,
+      reward: {
+        name: 'Laptop Bag',
+        description: 'Get a stylish laptop bag on goal completion.',
+        imageUrl: 'laptop-bag.jpg'
+      }
     };
 
     setLoading(true);
     const response = await apiCall('/create/goal', 'POST', goalData, token);
     setLoading(false);
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       Alert.alert('Success', 'Goal created successfully!', [
         { text: 'OK', onPress: () => navigation.goBack() }
       ]);
     } else {
+      console.log('❌ Goal creation failed:', response);
       Alert.alert('Error', 'Failed to create goal');
     }
   };

@@ -9,7 +9,7 @@ export const apiCall = async (endpoint, method = 'GET', data = null, token = nul
   }
 
   // ❗Guard: Prevent sending protected requests if user not logged in
-  if (endpoint !== '/user/login' && !token) {
+  if (!token && endpoint !== '/user/login' && endpoint !== '/user/register') {
     return { error: 'Unauthorized', status: 401 };
   }
 
@@ -30,8 +30,10 @@ export const apiCall = async (endpoint, method = 'GET', data = null, token = nul
   }
 
   try {
+    console.log(`🔍 API Call: ${method} ${BASE_URL}${endpoint}`, config);
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     const result = await response.json();
+    console.log(`📡 API Response: ${response.status} ${endpoint}`, result);
     return { data: result, status: response.status };
   } catch (error) {
     return { error: error.message, status: 500 };
