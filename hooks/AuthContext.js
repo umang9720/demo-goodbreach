@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const savedUser = await getData('user');
       const savedToken = await getData('token');
-      
+
       if (savedUser && savedToken) {
         setUser(savedUser);
         setToken(savedToken);
