@@ -15,7 +15,6 @@ import {
 import { apiCall } from '../../config/api';
 import { useAuth } from '../../hooks/AuthContext';
 
-
 const { width } = Dimensions.get("window");
 
 const LoginScreen = ({ navigation }) => {
@@ -31,7 +30,10 @@ const LoginScreen = ({ navigation }) => {
     }
 
     setLoading(true);
+
+    // ✅ No token passed for login call (as it should be)
     const response = await apiCall('/user/login', 'POST', { email, password });
+
     setLoading(false);
 
     if (response.status === 201) {
@@ -52,53 +54,50 @@ const LoginScreen = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
     
-       <Image
+      <Image
         source={require('../../assets/images/Group 1.png')}
         style={{ width: 70, height: 70, marginBottom:30 }}
       />
-       <Text style={styles.text}>Welcome Back To</Text>
-       <Text style={styles.text}>Good Breach!</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        </View>
+      <Text style={styles.text}>Welcome Back To</Text>
+      <Text style={styles.text}>Good Breach!</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
 
-        <TouchableOpacity 
-          style={[styles.logBtn, loading && styles.buttonDisabled]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.btnText}>Sign In</Text>
-          )}
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={[styles.logBtn, loading && styles.buttonDisabled]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.btnText}>Sign In</Text>
+        )}
+      </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.linkButton}
-          onPress={() => navigation.navigate('SignUp')}
-        >
-          <Text 
-          style={styles.linkText}
-          >
-            Don't have an account? <Text style={styles.linkTextBold}>Sign Up</Text>
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.linkButton}
+        onPress={() => navigation.navigate('SignUp')}
+      >
+        <Text style={styles.linkText}>
+          Don't have an account? <Text style={styles.linkTextBold}>Sign Up</Text>
+        </Text>
+      </TouchableOpacity>
 
     </KeyboardAvoidingView>
   );
@@ -106,18 +105,17 @@ const LoginScreen = ({ navigation }) => {
 
 export default LoginScreen;
 
-
 const styles = StyleSheet.create({
-   container: {
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  text:{
-    color:"#1C1825",
+  text: {
+    color: "#1C1825",
     fontSize: 24,
-    fontWeight:"bold",
-    fontFamily:"Ouicksand",
+    fontWeight: "bold",
+    fontFamily: "Ouicksand",
   },
   input: {
     backgroundColor: "#FFEAE9",
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   btnText: { color: "#fff", fontSize: 16 },
-   button: {
+  button: {
     marginTop: 15,
     flexDirection: 'row',
     backgroundColor: '#FFEAE9',
@@ -147,15 +145,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 9999,
     width: 346,
-   
   },
   linkText: {
     color: '#1C1825',
     fontSize: 16,
     fontWeight: 'medium',
   },
-  linkTextBold:{
-    fontWeight:"bold"
+  linkTextBold: {
+    fontWeight: "bold"
   }
-
 });

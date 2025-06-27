@@ -1,6 +1,18 @@
+import { getData } from '../utils/AsyncStorage';
+
 export const BASE_URL = 'http://3.8.94.61:8080/api';
 
 export const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
+  // 🔁 Automatically fetch token from AsyncStorage if not provided
+  if (!token) {
+    token = await getData('token');
+  }
+
+  // ❗Guard: Prevent sending protected requests if user not logged in
+  if (endpoint !== '/user/login' && !token) {
+    return { error: 'Unauthorized', status: 401 };
+  }
+
   const config = {
     method,
     headers: {
@@ -8,6 +20,7 @@ export const apiCall = async (endpoint, method = 'GET', data = null, token = nul
     },
   };
 
+  // ✅ Only attach Authorization header if token is present
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
